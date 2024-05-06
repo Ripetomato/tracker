@@ -1,0 +1,2 @@
+0 * * * * /home/ripetomato/getGoldPrice.sh
+# Use this to run the tracker file at the start of every hour. Put in terminal
