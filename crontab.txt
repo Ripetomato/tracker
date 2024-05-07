@@ -1,2 +1,2 @@
 # Use this to run the tracker file at the start of every hour. Put in terminal
-* * * * * /home/ripetomato/getBitcoinPrice.sh
+0 * * * * /home/ripetomato/getBitcoinPrice.sh
