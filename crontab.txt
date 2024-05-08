@@ -1,2 +1,5 @@
-# Use this to run the tracker file at the start of every hour. Put in terminal
-0 * * * * /home/ripetomato/getBitcoinPrice.sh
+# Use this to open cron file
+crontab -e
+
+# Use this to run the tracker file at the start of every hour. Put in cron file
+0 * * * * /home/ripetomato/getCryptoPrice.sh
