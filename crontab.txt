@@ -2,4 +2,4 @@
 crontab -e
 
 # Use this to run the tracker file at the start of every hour. Put in cron file
-0 * * * * /home/ripetomato/getCryptoPrice.sh
+0 * * * * /home/pi4r/getCryptoPrice.sh
