@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 09, 2024 at 01:40 PM
+-- Generation Time: May 10, 2024 at 06:45 AM
 -- Server version: 10.11.3-MariaDB-1+rpi1
 -- PHP Version: 8.2.7
 
@@ -24,12 +24,33 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `currencies`
+--
+
+CREATE TABLE `currencies` (
+  `CurrencyID` int(10) NOT NULL,
+  `CurrencyName` varchar(15) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `currencies`
+--
+
+INSERT INTO `currencies` (`CurrencyID`, `CurrencyName`) VALUES
+(1, 'Bitcoin'),
+(2, 'Ethereum'),
+(3, 'Binance Coin'),
+(4, 'Solana');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `prices`
 --
 
 CREATE TABLE `prices` (
   `TrackerID` int(10) NOT NULL,
-  `CurrencyName` varchar(15) NOT NULL,
+  `CurrencyID` int(10) NOT NULL,
   `Price` double NOT NULL,
   `24HLowestPrice` double NOT NULL,
   `24HHighestPrice` double NOT NULL,
@@ -41,20 +62,43 @@ CREATE TABLE `prices` (
 --
 
 --
+-- Indexes for table `currencies`
+--
+ALTER TABLE `currencies`
+  ADD PRIMARY KEY (`CurrencyID`);
+
+--
 -- Indexes for table `prices`
 --
 ALTER TABLE `prices`
-  ADD PRIMARY KEY (`TrackerID`);
+  ADD PRIMARY KEY (`TrackerID`),
+  ADD KEY `CurrencyName` (`CurrencyID`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
+-- AUTO_INCREMENT for table `currencies`
+--
+ALTER TABLE `currencies`
+  MODIFY `CurrencyID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `prices`
 --
 ALTER TABLE `prices`
   MODIFY `TrackerID` int(10) NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `prices`
+--
+ALTER TABLE `prices`
+  ADD CONSTRAINT `CurrencyName` FOREIGN KEY (`CurrencyID`) REFERENCES `currencies` (`CurrencyID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
