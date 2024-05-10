@@ -2,4 +2,4 @@
 crontab -e
 
 # Use this to run the tracker file at the start of every hour. Put in cron file
-0 * * * * /home/pi4r/getCryptoPrice.sh
+*/30 * * * * /home/[username]/tracker/getCryptoPrice.sh >> /home/[username]/tracker/errorLog.txt 2>&1
