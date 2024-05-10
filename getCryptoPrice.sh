@@ -114,17 +114,26 @@ db_user="root"
 db_password="password"
 db_name="crypto_prices_db"
 
-# Function to insert prices into MySQL table
+# Function to insert prices into MySQL tables
 insertPrices() {
     local currency_name=$1
     local price=$2
     local lowest_price=$3
     local highest_price=$4
 
-    mysql -u "$db_user" -p"$db_password" "$db_name" -e \
-    "INSERT INTO prices (CurrencyName, Price, 24HLowestPrice, 24HHighestPrice) \
-    VALUES ('$currency_name', '$price', '$lowest_price', '$highest_price');"
+    # Insert currency if it doesn't exist
+    currency_id=$(mysql -u "$db_user" -p"$db_password" "$db_name" -se "SELECT CurrencyID FROM currencies WHERE CurrencyName='$currency_name';")
+    if [ -z "$currency_id" ]; then
+        mysql -u "$db_user" -p"$db_password" "$db_name" -e "INSERT INTO currencies (CurrencyName) VALUES ('$currency_name');"
+        if [ $? -ne 0 ]; then
+            echo "Error: Failed to insert currency into MySQL at $(createTimestamp)"
+            exit 1
+        fi
+        currency_id=$(mysql -u "$db_user" -p"$db_password" "$db_name" -se "SELECT LAST_INSERT_ID();")
+    fi
 
+    # Insert price
+    mysql -u "$db_user" -p"$db_password" "$db_name" -e "INSERT INTO prices (CurrencyID, Price, 24HLowestPrice, 24HHighestPrice) VALUES ('$currency_id', '$price', '$lowest_price', '$highest_price');"
     if [ $? -ne 0 ]; then
         echo "Error: Failed to insert prices into MySQL at $(createTimestamp)"
         exit 1
