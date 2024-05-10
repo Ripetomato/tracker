@@ -19,7 +19,7 @@ highestBitcoinPricePattern='<span class="typography__StyledTypography-sc-owin6q-
 # Find and clean the 24H highest Bitcoin price
 highestBitcoinPrice=$(echo "$bitcoinContent" | grep -oP "$highestBitcoinPricePattern" | tail -n 1 | sed -E 's/.*\$([0-9,\.]+)<.*/\1/' | tr -d ',')
 
-#====================================================================================================================================================================================================
+#=====================================================================================================================================================================================
 
 # Connect to the webpage with Ethereum prices
 ethereumUrl="https://www.coindesk.com/price/ethereum/"
@@ -40,7 +40,7 @@ highestEthereumPricePattern='<span class="typography__StyledTypography-sc-owin6q
 # Find and clean the 24H highest Ethereum price
 highestEthereumPrice=$(echo "$ethereumContent" | grep -oP "$highestEthereumPricePattern" | tail -n 1 | sed -E 's/.*\$([0-9,\.]+)<.*/\1/' | tr -d ',')
 
-#====================================================================================================================================================================================================
+#=====================================================================================================================================================================================
 
 # Connect to the webpage with Binance Coin prices
 binanceUrl="https://www.coindesk.com/price/binance-coin/?_gl=1*nqhlxd*_up*MQ..*_ga*NDk0NzUyMDE3LjE3MTUxNzExNDQ.*_ga_VM3STRYVN8*MTcxNTE3MTE0NC4xLjAuMTcxNTE3MTE0NC4wLjAuMTQzODYyMDUw"
@@ -64,7 +64,7 @@ highestBinancePricePattern='<span class="typography__StyledTypography-sc-owin6q-
 # Find and clean the 24H highest Binance Coin price
 highestBinancePrice=$(echo "$binanceContent" | grep -oP "$highestBinancePricePattern" | tail -n 1 | sed -E 's/.*\$([0-9,\.]+)<.*/\1/' | tr -d ',')
 
-#====================================================================================================================================================================================================
+#=====================================================================================================================================================================================
 
 # Connect to the webpage with Solana prices
 solanaUrl="https://www.coindesk.com/price/solana/?_gl=1*1w7qejl*_up*MQ..*_ga*NDk0NzUyMDE3LjE3MTUxNzExNDQ.*_ga_VM3STRYVN8*MTcxNTE3MTE0NC4xLjEuMTcxNTE3MTE2Ny4wLjAuMTQzODYyMDUw"
@@ -88,29 +88,58 @@ highestSolanaPricePattern='<span class="typography__StyledTypography-sc-owin6q-0
 # Find and clean the 24H highest Solana price
 highestSolanaPrice=$(echo "$solanaContent" | grep -oP "$highestSolanaPricePattern" | tail -n 1 | sed -E 's/.*\$([0-9,\.]+)<.*/\1/' | tr -d ',')
 
-#====================================================================================================================================================================================================
+#=====================================================================================================================================================================================
+
+# Function to create a timestamp
+createTimestamp() {
+    timestamp=$(date +'%Y-%m-%d %H:%M:%S')
+    echo $timestamp
+}
+
+# Function to check internet connection
+checkInternet() {
+    wget -q --spider http://example.com
+
+    if [ $? -ne 0 ]; then
+        echo "Error: Internet connection lost at $(createTimestamp)"
+        exit 1
+    fi
+}
+
+# Check internet connection
+checkInternet
 
 # MySQL database details
 db_user="root"
 db_password="password"
 db_name="crypto_prices_db"
 
+# Function to insert prices into MySQL table
+insertPrices() {
+    local currency_name=$1
+    local price=$2
+    local lowest_price=$3
+    local highest_price=$4
+
+    mysql -u "$db_user" -p"$db_password" "$db_name" -e \
+    "INSERT INTO prices (CurrencyName, Price, 24HLowestPrice, 24HHighestPrice) \
+    VALUES ('$currency_name', '$price', '$lowest_price', '$highest_price');"
+
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to insert prices into MySQL at $(createTimestamp)"
+        exit 1
+    fi
+}
+
 # Insert Bitcoin prices into MySQL table
-mysql -u "$db_user" -p"$db_password" "$db_name" -e \
-"INSERT INTO prices (CurrencyName, Price, 24HLowestPrice, 24HHighestPrice) \
-VALUES ('Bitcoin', '$bitcoinPrice', '$lowestBitcoinPrice', '$highestBitcoinPrice');"
+insertPrices "Bitcoin" "$bitcoinPrice" "$lowestBitcoinPrice" "$highestBitcoinPrice"
 
 # Insert Ethereum prices into MySQL table
-mysql -u "$db_user" -p"$db_password" "$db_name" -e \
-"INSERT INTO prices (CurrencyName, Price, 24HLowestPrice, 24HHighestPrice) \
-VALUES ('Ethereum', '$ethereumPrice', '$lowestEthereumPrice', '$highestEthereumPrice');"
+insertPrices "Ethereum" "$ethereumPrice" "$lowestEthereumPrice" "$highestEthereumPrice"
 
 # Insert Binance Coin prices into MySQL table
-mysql -u "$db_user" -p"$db_password" "$db_name" -e \
-"INSERT INTO prices (CurrencyName, Price, 24HLowestPrice, 24HHighestPrice) \
-VALUES ('Binance Coin', '$binancePrice', '$lowestBinancePrice', '$highestBinancePrice');"
+insertPrices "Binance Coin" "$binancePrice" "$lowestBinancePrice" "$highestBinancePrice"
 
-# Insert Ethereum prices into MySQL table
-mysql -u "$db_user" -p"$db_password" "$db_name" -e \
-"INSERT INTO prices (CurrencyName, Price, 24HLowestPrice, 24HHighestPrice) \
-VALUES ('Solana', '$solanaPrice', '$lowestSolanaPrice', '$highestSolanaPrice');"
+# Insert Solana prices into MySQL table
+insertPrices "Solana" "$solanaPrice" "$lowestSolanaPrice" "$highestSolanaPrice"
+
