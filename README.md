@@ -66,12 +66,18 @@ If you choose to use a folder with a different name, you will need to make chang
 **Setting up the data scraper to run at specified intervals**  
 1. Open the terminal.  
    ![Open terminal](readmeImages/terminal.png)
-2. Open crontab.
+2. Change the database credentials.  
+   ![Change database credentials in tracker script](readmeImages/changeCredentials.png)
+3. Save the script.  
+   Press [Ctrl O], then press [Enter].
+4. Close the script.  
+   Press [Ctrl X].
+5. Open crontab.
    ```
    crontab -e
    ```
    ![Open crontab](readmeImages/openCrontab.png)
-3. Enter the following command in crontab to run the getCryptoPrice.sh script.
+6. Enter the following command in crontab to run the getCryptoPrice.sh script.
    ```
    */10 * * * * /home/pi4r/tracker/getCryptoPrice.sh >> /home/pi4r/tracker/errorLog.txt 2>&1
    ```
@@ -81,9 +87,9 @@ If you choose to use a folder with a different name, you will need to make chang
    Adjust the command to run the script at your preferred intervals.  
    You can learn more about using crontab here:  
    [More about crontab](https://phoenixnap.com/kb/set-up-cron-job-linux)
-4. Save the crontab.  
+7. Save the crontab.  
    Press [Ctrl O], then press [Enter].
-5. Close the crontab.  
+8. Close the crontab.  
    Press [Ctrl X].
 
 **Running the data scraper manually**
@@ -117,12 +123,18 @@ If you choose to use a folder with a different name, you will need to make chang
 4. Change the username of the path in the errorLogDir variable.
    In this case, the username is "pi4r".
    ![Change "getGraph.sh"](readmeImages/changeGraphScript.png)
-6. Run the getGraph.sh script.
+5. Change the database credentials.  
+   ![Change database credentials in tracker script](readmeImages/changeCredentials.png)
+6. Save the script.  
+   Press [Ctrl O], then press [Enter].
+7. Close the script.  
+   Press [Ctrl X].
+8. Run the getGraph.sh script.
    ```
    ./getGraph.sh
    ```
    ![Run "getGraph.sh"](readmeImages/runGraphScript.png)
-7. The graph png files should be in the same directory as the scripts.
+9. The graph png files should be in the same directory as the scripts.
 
 **Checking for error occurrences**
 1. Open the terminal.  
