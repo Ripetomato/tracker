@@ -110,30 +110,30 @@ checkInternet() {
 checkInternet
 
 # MySQL database details
-db_user="root"
-db_password="password"
-db_name="crypto_prices_db"
+dbUser="root"
+dbPassword="password"
+dbName="crypto_prices_db"
 
 # Function to insert prices into MySQL tables
 insertPrices() {
-    local currency_name=$1
+    local currencyName=$1
     local price=$2
-    local lowest_price=$3
-    local highest_price=$4
+    local lowestPrice=$3
+    local highestPrice=$4
 
     # Insert currency if it doesn't exist
-    currency_id=$(mysql -u "$db_user" -p"$db_password" "$db_name" -se "SELECT CurrencyID FROM currencies WHERE CurrencyName='$currency_name';")
-    if [ -z "$currency_id" ]; then
-        mysql -u "$db_user" -p"$db_password" "$db_name" -e "INSERT INTO currencies (CurrencyName) VALUES ('$currency_name');"
+    currencyId=$(mysql -u "$dbUser" -p"$dbPassword" "$dbName" -se "SELECT CurrencyID FROM currencies WHERE CurrencyName='$currencyName';")
+    if [ -z "$currencyId" ]; then
+        mysql -u "$dbUser" -p"$dbPassword" "$dbName" -e "INSERT INTO currencies (CurrencyName) VALUES ('$currencyName');"
         if [ $? -ne 0 ]; then
             echo "Error: Failed to insert currency into MySQL at $(createTimestamp)"
             exit 1
         fi
-        currency_id=$(mysql -u "$db_user" -p"$db_password" "$db_name" -se "SELECT LAST_INSERT_ID();")
+        currencyId=$(mysql -u "$dbUser" -p"$dbPassword" "$dbName" -se "SELECT LAST_INSERT_ID();")
     fi
 
     # Insert price
-    mysql -u "$db_user" -p"$db_password" "$db_name" -e "INSERT INTO prices (CurrencyID, Price, 24HLowestPrice, 24HHighestPrice) VALUES ('$currency_id', '$price', '$lowest_price', '$highest_price');"
+    mysql -u "$dbUser" -p"$dbPassword" "$dbName" -e "INSERT INTO prices (CurrencyID, Price, 24HLowestPrice, 24HHighestPrice) VALUES ('$currencyId', '$price', '$lowestPrice', '$highestPrice');"
     if [ $? -ne 0 ]; then
         echo "Error: Failed to insert prices into MySQL at $(createTimestamp)"
         exit 1
